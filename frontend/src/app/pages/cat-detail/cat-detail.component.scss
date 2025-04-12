@@ -1,0 +1,36 @@
+/* src/app/pages/cat-detail/cat-detail.component.scss */
+.cat-detail-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #fefefe;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  
+    h2 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+    }
+  
+    p {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+  
+    img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+  
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  }
+  
+  .loading {
+    text-align: center;
+    font-size: 1.2rem;
+    margin: 2rem;
+  }  

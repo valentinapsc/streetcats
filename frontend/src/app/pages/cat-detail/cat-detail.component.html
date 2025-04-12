@@ -1,1 +1,14 @@
-<p>cat-detail works!</p>
+<!-- src/app/pages/cat-detail/cat-detail.component.html -->
+<div class="cat-detail-container" *ngIf="!isLoading">
+    <div *ngIf="errorMessage; else detailBlock">
+      <p class="error">{{ errorMessage }}</p>
+    </div>
+    <ng-template #detailBlock>
+      <h2>{{ cat?.name }}</h2>
+      <p>{{ cat?.description }}</p>
+      <div *ngIf="cat?.image">
+        <img [src]="'http://localhost:3000/uploads/' + cat?.image" alt="{{ cat?.name }}" />
+      </div>
+    </ng-template>
+  </div>
+  <div *ngIf="isLoading" class="loading">Caricamento...</div>  

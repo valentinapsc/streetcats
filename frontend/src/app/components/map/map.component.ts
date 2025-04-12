@@ -40,15 +40,20 @@ export class MapComponent implements AfterViewInit, OnChanges { // implementa le
 
   private addMarkers(): void {
     // Rimuovi eventuali markers esistenti
-    this.markers.forEach(marker => marker.remove());
-    this.markers = [];
-
-    // Aggiungi un marker per ogni gatto
+    // Assumiamo che cat.id sia presente
     this.cats.forEach(cat => {
+      let popupContent = `<b>${cat.name}</b><br>${cat.description}`;
+      if (cat.image) {
+        const imageUrl = `http://localhost:3000/uploads/${cat.image}`;
+        popupContent += `<br><img src="${imageUrl}" alt="${cat.name}" style="max-width: 100px; margin-top: 5px;" />`;
+      }
+      // Aggiungi link per visualizzare i dettagli
+      popupContent += `<br><a href="/cat/${cat.id}">Visualizza dettagli</a>`;
+  
       const marker = L.marker([cat.lat, cat.lng])
-        .addTo(this.map!)
-        .bindPopup(`<b>${cat.name}</b><br>${cat.description}`);
+      .addTo(this.map!)
+      .bindPopup(popupContent);
       this.markers.push(marker);
-    });
+    });  
   }
 }
