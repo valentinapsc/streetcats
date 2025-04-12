@@ -1,0 +1,43 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2b2b2b;
+  padding: 1rem 2rem;
+  color: #fff;
+
+  .logo {
+    display: flex;
+    align-items: center;
+
+    .cat-logo {
+      width: 40px;
+      height: 40px;
+      margin-right: 0.5rem;
+    }
+
+    a {
+      font-weight: bold;
+      font-size: 1.6rem;
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+
+    a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #FFA726; // accento arancione pastello
+      }
+    }
+  }
+}

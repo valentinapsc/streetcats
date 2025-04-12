@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
+body {
+  font-family: 'Indie Flower', cursive;
+  background-color: #FDF6E3; /* colore di base caldo */
+}
+
+@keyframes pulsate {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  button.pulsante-animato {
+    animation: pulsate 1s infinite;
+  }  

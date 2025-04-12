@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<div class="submit-cat-container">
+  <h2>Segnala un Avvistamento</h2>
+  <form [formGroup]="catForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Nome/Etichetta del Gatto:</label>
+      <input id="name" type="text" formControlName="name" placeholder="Inserisci il nome o etichetta" />
+    </div>
+
+    <!-- Seleziona una descrizione del gatto -->
+    <div class="form-group">
+      <label for="description">Descrizione:</label>
+      <textarea id="description" formControlName="description" placeholder="Descrivi il gatto"></textarea>
+    </div>
+
+    <!-- Inserisci il LocationPicker -->
+    <div class="form-group">
+      <label>Seleziona la posizione sul mappa:</label>
+      <app-location-picker (locationSelected)="updateLocation($event)"></app-location-picker>
+    </div>
+
+    <!-- (Opzionale) Mostra le coordinate selezionate -->
+    <div class="form-group coordinates-display" *ngIf="catForm.value.lat && catForm.value.lng">
+      <p>Latitudine: {{ catForm.value.lat }}, Longitudine: {{ catForm.value.lng }}</p>
+    </div>
+
+    <div class="form-group">
+      <label for="image">Immagine (opzionale):</label>
+      <input id="image" type="file" (change)="onFileChange($event)" />
+    </div>
+
+    <button type="submit" [disabled]="!catForm.valid">Invia Segnalazione</button>
+  </form>
+</div>
