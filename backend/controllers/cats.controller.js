@@ -1,5 +1,8 @@
+// serve per gestire le richieste relative ai gatti
 const Cat = require('../models/cat');
 
+// Funzione per ottenere tutti i gatti
+// Restituisce un array di gatti in formato JSON
 exports.getAllCats = async (req, res) => {
   try {
     const cats = await Cat.findAll();
@@ -9,6 +12,7 @@ exports.getAllCats = async (req, res) => {
   }
 };
 
+// Funzione per ottenere un gatto specifico
 exports.getCatById = async (req, res) => {
   try {
     const cat = await Cat.findByPk(req.params.id);
@@ -21,6 +25,8 @@ exports.getCatById = async (req, res) => {
   }
 };
 
+// Funzione per creare un nuovo gatto
+// Utilizza multer per gestire il file upload
 exports.createCat = async (req, res) => {
   const { name, description, lat, lng } = req.body;
   const image = req.file ? req.file.filename : null;

@@ -1,3 +1,4 @@
+// questo file definisce il modello per i gatti utilizzando Sequelize e definisce le colonne del database
 const { DataTypes } = require('sequelize');
 const sequelize = require('./index');
 

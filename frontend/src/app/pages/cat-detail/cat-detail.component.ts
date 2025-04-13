@@ -1,9 +1,10 @@
-// src/app/pages/cat-detail/cat-detail.component.ts
+// descrizione: Componente per visualizzare i dettagli di un gatto specifico
 
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CatService, Cat } from '../../services/cat.service';
 import { CommonModule } from '@angular/common';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-cat-detail',
@@ -17,7 +18,7 @@ export class CatDetailComponent implements OnInit {
   isLoading: boolean = true;
   errorMessage: string = '';
 
-  constructor(private route: ActivatedRoute, private catService: CatService) {}
+  constructor(private route: ActivatedRoute, private catService: CatService, private notificationService: NotificationService, private router: Router) {}
 
   ngOnInit(): void {
     // Recupera l'ID dall'URL e converti in numero
@@ -37,6 +38,24 @@ export class CatDetailComponent implements OnInit {
     } else {
       this.errorMessage = 'ID non valido';
       this.isLoading = false;
+    }
+  }
+
+  onDeleteCat(): void {
+    if (!this.cat || !this.cat.id) { return; }
+    
+    if (confirm('Sei sicuro di voler eliminare questo gatto?')) {
+      this.catService.deleteCat(this.cat.id).subscribe({
+        next: (res) => {
+          this.notificationService.show('Gatto eliminato con successo');
+          // Dopo l'eliminazione, ad esempio, naviga alla pagina principale o aggiorna la lista
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          console.error(err);
+          this.notificationService.show('Errore nell\'eliminazione del gatto', 4000);
+        }
+      });
     }
   }
 }

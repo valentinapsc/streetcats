@@ -42,7 +42,8 @@ export class MapComponent implements AfterViewInit, OnChanges { // implementa le
     // Rimuovi eventuali markers esistenti
     // Assumiamo che cat.id sia presente
     this.cats.forEach(cat => {
-      let popupContent = `<b>${cat.name}</b><br>${cat.description}`;
+      let popupContent = `<b>${cat.name}</b><br>${cat.description}`; // Contenuto del popup con nome e descrizione del gatto
+      // Aggiungi l'immagine se disponibile
       if (cat.image) {
         const imageUrl = `http://localhost:3000/uploads/${cat.image}`;
         popupContent += `<br><img src="${imageUrl}" alt="${cat.name}" style="max-width: 100px; margin-top: 5px;" />`;

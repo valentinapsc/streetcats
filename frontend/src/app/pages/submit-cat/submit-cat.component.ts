@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CatService } from '../../services/cat.service';
+import { NotificationService } from '../../services/notification.service';
 import { LocationPickerComponent } from '../../components/location-picker/location-picker.component';
 
 @Component({
@@ -14,7 +15,11 @@ import { LocationPickerComponent } from '../../components/location-picker/locati
 export class SubmitCatComponent {
   catForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private catService: CatService) {
+  constructor(
+    private fb: FormBuilder, 
+    private catService: CatService,
+    private notificationService: NotificationService
+  ) {
     this.catForm = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
@@ -41,10 +46,14 @@ export class SubmitCatComponent {
       this.catService.submitCat(formData).subscribe({
         next: response => {
           console.log('Segnalazione inviata con successo', response);
-          // Mostra un messaggio o reindirizza l'utente
+          // Visualizza una notifica di successo
+          this.notificationService.show('Gatto caricato con successo');
+          // Altre azioni, ad es. resettare il form
+          this.catForm.reset();
         },
         error: err => {
           console.error('Errore durante l\'invio della segnalazione', err);
+          this.notificationService.show('Errore nel caricamento del gatto', 4000);
         }
       });
     } else {

@@ -1,3 +1,4 @@
+// questo file definisce la connessione al database SQLite utilizzando Sequelize
 const { Sequelize } = require('sequelize');
 const path = require('path');
 

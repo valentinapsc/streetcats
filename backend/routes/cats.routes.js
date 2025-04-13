@@ -1,6 +1,9 @@
+// In questo file abbiamo definito le rotte per il nostro API RESTful per i gatti.
+// Abbiamo anche configurato multer per gestire l'upload delle immagini e creato una cartella per gli upload se non esiste già.const express = require('express');
+
 const express = require('express');
 const router = express.Router();
-const catsController = require('../controllers/cats.controller');
+const catsController = require('../controllers/cats.controller.js');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -33,5 +36,3 @@ router.put('/:id', upload.single('image'), catsController.updateCat);  // PUT /a
 router.delete('/:id', catsController.deleteCat);                        // DELETE /api/cats/:id
 
 module.exports = router;
-// In questo file abbiamo definito le rotte per il nostro API RESTful per i gatti.
-// Abbiamo anche configurato multer per gestire l'upload delle immagini e creato una cartella per gli upload se non esiste già.

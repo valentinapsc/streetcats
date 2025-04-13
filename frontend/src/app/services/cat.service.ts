@@ -31,4 +31,12 @@ export class CatService {
   submitCat(formData: FormData): Observable<Cat> {
     return this.http.post<Cat>(this.apiUrl, formData);
   }
+
+  updateCat(id: number, formData: FormData): Observable<Cat> {
+    return this.http.put<Cat>(`/api/cats/${id}`, formData)
+  }
+
+  deleteCat(id: number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
+  }
 }

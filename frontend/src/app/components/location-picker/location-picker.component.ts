@@ -1,3 +1,9 @@
+// descrizione: Componente per la selezione della posizione sulla mappa, utilizzando Leaflet.js
+// in particolare, il componente mostra una mappa e consente all'utente di selezionare una posizione in questo modo:
+// 1. Inizializza una mappa centrata su Napoli, Italia.
+// 2. Aggiunge un marker alla mappa quando l'utente fa clic su un punto della mappa.
+// 3. Comunica la posizione selezionata al componente padre tramite un evento `locationSelected`.
+
 import { Component, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 
