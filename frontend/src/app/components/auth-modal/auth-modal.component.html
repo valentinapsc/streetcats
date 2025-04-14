@@ -1,0 +1,42 @@
+<div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()"></div>
+<div class="modal" *ngIf="showModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-button" (click)="closeModal()">✖</button>
+    <h2>{{ isLoginMode ? 'Login' : 'Registrati' }}</h2>
+    
+    <!-- Messaggio di errore -->
+    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <!-- Form per il Login -->
+    <form *ngIf="isLoginMode" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <label for="login-email">Email</label>
+      <input id="login-email" type="email" formControlName="email" placeholder="Inserisci la tua email" />
+
+      <label for="login-password">Password</label>
+      <input id="login-password" type="password" formControlName="password" placeholder="Inserisci la tua password" />
+
+      <button type="submit" [disabled]="loginForm.invalid">Login</button>
+    </form>
+
+    <!-- Form per la Registrazione -->
+    <form *ngIf="!isLoginMode" [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <label for="reg-username">Username</label>
+      <input id="reg-username" type="text" formControlName="username" placeholder="Inserisci un username" />
+
+      <label for="reg-email">Email</label>
+      <input id="reg-email" type="email" formControlName="email" placeholder="Inserisci la tua email" />
+
+      <label for="reg-password">Password</label>
+      <input id="reg-password" type="password" formControlName="password" placeholder="Inserisci una password" />
+
+      <button type="submit" [disabled]="registerForm.invalid">Registrati</button>
+    </form>
+
+    <!-- Link per alternare tra login e registrazione -->
+    <div class="toggle-link">
+      <a (click)="toggleMode()">
+        {{ isLoginMode ? 'Non hai un account? Registrati' : 'Hai già un account? Effettua il login' }}
+      </a>
+    </div>
+  </div>
+</div>

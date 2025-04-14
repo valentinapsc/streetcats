@@ -1,4 +1,3 @@
-// index.js
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -11,24 +10,24 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Serve i file statici in "uploads"
+// Serve file statici per uploads, se necessario
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Importa le rotte dei gatti
 const catsRoutes = require('./routes/cats.routes');
 app.use('/api/cats', catsRoutes);
 
-// (Opzionale) Configurazione per servire un frontend statico, se necessario
-// app.use(express.static(path.join(__dirname, 'public')));
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'public', 'index.html'));
-// });
+// Importa le rotte di autenticazione
+const authRoutes = require('./routes/auth.routes');
+app.use('/api/auth', authRoutes);
 
-// Importa e sincronizza il database con Sequelize
+// Sincronizza il database e avvia il server
 const sequelize = require('./models/index');
 const Cat = require('./models/cat');
+const User = require('./models/User');
 
 sequelize.sync().then(async () => {
+  // (Facoltativo) Inserisce dati seed se necessario
   const count = await Cat.count();
   if (count === 0) {
     await Cat.create({
@@ -38,9 +37,8 @@ sequelize.sync().then(async () => {
       lng: 14.2681,
       image: null
     });
-    console.log('Record di seed inserito.');
+    console.log('Record di seed inserito per i gatti.');
   }
-  // Avvia il server
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
