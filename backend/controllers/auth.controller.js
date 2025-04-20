@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Una chiave segreta per JWT; in produzione dovrai usare una variabile d'ambiente
+// Una chiave segreta per JWT (in produzione dovrei usare una variabile d'ambiente)
 const JWT_SECRET = 'la_tua_chiave_super_segretissima';
 
 exports.register = async (req, res) => {

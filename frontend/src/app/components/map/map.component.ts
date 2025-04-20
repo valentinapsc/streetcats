@@ -4,6 +4,16 @@
 import { Component, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import * as L from 'leaflet';
 import { Cat } from '../../services/cat.service';
+import { Icon } from 'leaflet';
+delete (Icon.Default.prototype as any)._getIconUrl;  // serve per evitare conflitti con le path di default
+
+Icon.Default.mergeOptions({
+  iconUrl: 'assets/images/cat-marker.webp',
+  shadowUrl: 'assets/images/marker-shadow.png',
+  iconSize: [38, 38],
+  iconAnchor: [19, 38],
+  popupAnchor: [0, -38]
+});
 
 @Component({ // decoratore del componente
   // Specifica il selettore del componente, il template e gli stili
@@ -18,7 +28,7 @@ export class MapComponent implements AfterViewInit, OnChanges { // implementa le
   private map: L.Map | undefined;
   private markers: L.Marker[] = [];
 
-  ngAfterViewInit(): void { // metodo chiamato dopo che la vista del componente è stata inizializzata
+  ngAfterViewInit(): void { // metodo chiamato dopo che la vista del componente è stata inizializzata (dopo il caricamento del template)
     // Inizializza la mappa e aggiungi i marker
     this.initMap();
   }
@@ -31,7 +41,7 @@ export class MapComponent implements AfterViewInit, OnChanges { // implementa le
   }
 
   private initMap(): void {
-    this.map = L.map('map').setView([40.8522, 14.2681], 13); // Coordinate iniziali (es. Napoli)
+    this.map = L.map('map').setView([40.8522, 14.2681], 13); // Coordinate iniziali (Napoli)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
@@ -39,22 +49,32 @@ export class MapComponent implements AfterViewInit, OnChanges { // implementa le
   }
 
   private addMarkers(): void {
-    // Rimuovi eventuali markers esistenti
-    // Assumiamo che cat.id sia presente
+    // Rimuovi eventuali marker esistenti
+    this.markers.forEach(m => this.map?.removeLayer(m));
+    this.markers = [];
+  
+    // Icona personalizzata
+    const catIcon = L.icon({
+      iconUrl: 'assets/images/cat-marker.webp',
+      iconSize:   [38, 38],
+      iconAnchor: [19, 38],
+      popupAnchor:[0, -38],
+      shadowUrl:  'assets/images/marker-shadow.png'  
+    });
+  
     this.cats.forEach(cat => {
-      let popupContent = `<b>${cat.name}</b><br>${cat.description}`; // Contenuto del popup con nome e descrizione del gatto
-      // Aggiungi l'immagine se disponibile
+      let popupContent = `<b>${cat.name}</b><br>${cat.description}`;
       if (cat.image) {
         const imageUrl = `http://localhost:3000/uploads/${cat.image}`;
-        popupContent += `<br><img src="${imageUrl}" alt="${cat.name}" style="max-width: 100px; margin-top: 5px;" />`;
+        popupContent += `<br><img src="${imageUrl}" style="max-width:100px;margin-top:5px;">`;
       }
-      // Aggiungi link per visualizzare i dettagli
       popupContent += `<br><a href="/cat/${cat.id}">Visualizza dettagli</a>`;
   
-      const marker = L.marker([cat.lat, cat.lng])
-      .addTo(this.map!)
-      .bindPopup(popupContent);
+      const marker = L.marker([cat.lat, cat.lng], { icon: catIcon })
+        .addTo(this.map!)
+        .bindPopup(popupContent);
+  
       this.markers.push(marker);
-    });  
+    });
   }
 }

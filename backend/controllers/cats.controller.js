@@ -26,7 +26,7 @@ exports.getCatById = async (req, res) => {
 };
 
 // Funzione per creare un nuovo gatto
-// Utilizza multer per gestire il file upload
+// Utilizza multer per gestire il file upload (multer è un middleware per gestire i file multipart/form-data)
 exports.createCat = async (req, res) => {
   const { name, description, lat, lng } = req.body;
   const image = req.file ? req.file.filename : null;

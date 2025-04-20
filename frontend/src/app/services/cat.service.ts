@@ -15,7 +15,7 @@ export interface Cat {
   providedIn: 'root'
 })
 export class CatService {
-  // Assumi che il backend sia in ascolto su localhost:3000
+  // Assumo che il backend sia in ascolto su localhost:3000
   private apiUrl = 'http://localhost:3000/api/cats';
 
   constructor(private http: HttpClient) {}
