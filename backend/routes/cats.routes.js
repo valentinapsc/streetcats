@@ -26,13 +26,13 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Rotte esistenti
+// Rotte di sola lettura (disponibili a tutti)
 router.get('/', catsController.getAllCats);             // GET /api/cats
 router.get('/:id', catsController.getCatById);            // GET /api/cats/:id
-router.post('/', upload.single('image'), catsController.createCat);  // POST /api/cats
 
-// Nuovi endpoint per l'aggiornamento e la cancellazione
-router.put('/:id', upload.single('image'), catsController.updateCat);  // PUT /api/cats/:id
-router.delete('/:id', catsController.deleteCat);                        // DELETE /api/cats/:id
+// Rotte protette: solo per utenti autenticati
+router.post('/', authMiddleware, upload.single('image'), catsController.createCat);  // POST /api/cats
+router.put('/:id', authMiddleware, upload.single('image'), catsController.updateCat);  // PUT /api/cats/:id
+router.delete('/:id', authMiddleware, catsController.deleteCat);                        // DELETE /api/cats/:id
 
 module.exports = router;
