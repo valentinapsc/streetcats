@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CatService, Cat } from '../../services/cat.service';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../services/notification.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-cat-detail',
@@ -18,7 +19,7 @@ export class CatDetailComponent implements OnInit {
   isLoading: boolean = true;
   errorMessage: string = '';
 
-  constructor(private route: ActivatedRoute, private catService: CatService, private notificationService: NotificationService, private router: Router) {}
+  constructor(private route: ActivatedRoute, private catService: CatService, private notificationService: NotificationService, private router: Router, public authService: AuthService) {}
 
   ngOnInit(): void {
     // Recupera l'ID dall'URL e converti in numero
@@ -57,5 +58,11 @@ export class CatDetailComponent implements OnInit {
         }
       });
     }
+  }
+
+  openEditModal(): void {
+    if (!this.cat) { return; }
+    // Logica per aprire il modal di modifica
+    this.router.navigate(['/edit-cat', this.cat.id]);
   }
 }

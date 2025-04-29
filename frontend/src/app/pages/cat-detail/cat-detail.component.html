@@ -1,15 +1,25 @@
+<!DOCTYPE html>
+
 <div class="cat-detail-container" *ngIf="!isLoading">
-    <div *ngIf="errorMessage; else detailBlock">
-      <p class="error">{{ errorMessage }}</p>
-    </div>
-    <ng-template #detailBlock>
-      <h2>{{ cat?.name }}</h2>
-      <p>{{ cat?.description }}</p>
-      <div *ngIf="cat?.image">
-        <img [src]="'http://localhost:3000/uploads/' + cat?.image" alt="{{ cat?.name }}" />
-      </div>
-      <!-- Pulsante per eliminare il gatto -->
-    <button (click)="onDeleteCat()">Elimina Gatto</button>
-    </ng-template>
+  <div *ngIf="errorMessage; else detailBlock">
+    <p class="error">{{ errorMessage }}</p>
   </div>
-  <div *ngIf="isLoading" class="loading">Caricamento...</div>  
+
+  <ng-template #detailBlock>
+    <h2>{{ cat?.name }}</h2>
+    <p>{{ cat?.description }}</p>
+
+    <div *ngIf="cat?.image">
+      <img [src]="'http://localhost:3000/uploads/' + cat?.image"
+           [alt]="cat?.name" />
+    </div>
+
+    <!-- azioni visibili solo se l’utente è loggato -->
+    <div *ngIf="authService.isLoggedIn()">
+      <button (click)="openEditModal()">Modifica</button>
+      <button (click)="onDeleteCat()">Elimina</button>
+    </div>
+  </ng-template>
+</div>
+
+<div *ngIf="isLoading" class="loading">Caricamento...</div>
