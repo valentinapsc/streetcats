@@ -7,6 +7,7 @@ const catsController = require('../controllers/cats.controller.js');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const authMiddleware = require('../middleware/auth.middleware');
 
 // Configura la cartella per gli upload
 const uploadsDir = path.join(__dirname, '..', 'uploads');

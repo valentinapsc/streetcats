@@ -14,6 +14,7 @@ module.exports = (req, res, next) => {
     req.user = decoded; // si possono utilizzare i dati dell'utente in req.user se necessario
     next();
   } catch (error) {
+    console.error('JWT verification failed:', error);
     return res.status(401).json({ error: 'Accesso negato: token non valido' });
   }
 };

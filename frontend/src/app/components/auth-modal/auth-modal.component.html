@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<div class="modal-backdrop" *ngif="showModal" (click)="closeModal()" (keydown)="$event.stopPropagation()"></div>
+<div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()" (keydown)="$event.stopPropagation()"></div>
 <div class="modal" *ngIf="showModal">
   <div class="modal-content" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
     <button class="close-button" (click)="closeModal()">✖</button>

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CatService } from '../../services/cat.service';
+import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { LocationPickerComponent } from '../../components/location-picker/location-picker.component';
 
@@ -18,6 +19,7 @@ export class SubmitCatComponent {
   constructor(
     private fb: FormBuilder, 
     private catService: CatService,
+    public authService: AuthService,  // reso pubblico per usarlo nel template
     private notificationService: NotificationService
   ) {
     this.catForm = this.fb.group({
@@ -48,13 +50,17 @@ export class SubmitCatComponent {
           console.log('Segnalazione inviata con successo', response);
           // Visualizza una notifica di successo
           this.notificationService.show('Gatto caricato con successo');
-          // Altre azioni, ad es. resettare il form
+          // Altre azioni...
           this.catForm.reset();
         },
         error: err => {
-          console.error('Errore durante l\'invio della segnalazione', err);
-          this.notificationService.show('Errore nel caricamento del gatto', 4000);
-        }
+          if (err.status === 401) {
+            this.notificationService.show('Devi effettuare il login per segnalare.');
+            this.openAuthModal();
+          } else {
+            this.notificationService.show('Errore nel caricamento', 4000);
+          }
+        }        
       });
     } else {
       console.log('Form non valido');
@@ -62,9 +68,14 @@ export class SubmitCatComponent {
   }
 
   onFileChange(event: any): void {
-    if (event.target.files && event.target.files.length) {
+    if (event.target?.files?.length) {
       const file = event.target.files[0];
       this.catForm.patchValue({ image: file });
     }
+  }
+
+  openAuthModal(): void {
+    // Logica per aprire il modal di autenticazione (già implementata nel componente AuthModal) (cosa significa "già implementata nel componente AuthModal"?) 
+    // si può interagire ad esempio tramite ViewChild o un servizio di modal
   }
 }
