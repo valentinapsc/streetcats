@@ -75,7 +75,7 @@ export class SubmitCatComponent {
   }
 
   openAuthModal(): void {
-    // Logica per aprire il modal di autenticazione (già implementata nel componente AuthModal) (cosa significa "già implementata nel componente AuthModal"?) 
+    // Logica per aprire il modal di autenticazione (già implementata nel componente AuthModal)
     // si può interagire ad esempio tramite ViewChild o un servizio di modal
   }
 }

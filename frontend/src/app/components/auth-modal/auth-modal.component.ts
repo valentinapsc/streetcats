@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service'; 
 
 @Component({
   selector: 'app-auth-modal',
@@ -18,7 +19,7 @@ export class AuthModalComponent {
   registerForm: FormGroup;
   errorMessage = '';
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private authService: AuthService) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -51,9 +52,9 @@ export class AuthModalComponent {
     const loginData = this.loginForm.value;
     this.http.post<any>('http://localhost:3000/api/auth/login', loginData)
       .subscribe({
-        next: (res) => {
+        next: res => {
           console.log('Login successo', res);
-          // Salva il token e fai eventuale redirect o aggiornamento UI
+          this.authService.setToken(res.token);   //  ← salva!
           this.closeModal();
         },
         error: (err) => {

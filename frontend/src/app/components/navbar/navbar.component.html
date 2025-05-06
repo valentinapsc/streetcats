@@ -7,9 +7,20 @@
   <ul class="nav-links">
     <li><a routerLink="/">Home</a></li>
     <li><a routerLink="/submit">Segnala</a></li>
-    <li>
-      <!-- il bottone per aprire il modal -->
-      <a href="javascript:void(0)" (click)="openAuthModal()">Login/Registrati</a>    </li>
+    
+    <!-- area autenticazione -->
+    <ng-container *ngIf="auth.isLoggedIn(); else guestLinks">
+      <li><a href="javascript:void(0)" (click)="logout()">Logout</a></li>
+    </ng-container>
+
+    <!-- link per gli ospiti -->
+    <ng-template #guestLinks>
+      <li>
+        <a href="javascript:void(0)" (click)="openAuthModal()">
+          Login / Registrati
+        </a>
+      </li>
+    </ng-template>
   </ul>
 </nav>
 

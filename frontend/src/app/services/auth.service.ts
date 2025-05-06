@@ -1,28 +1,33 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly tokenKey = 'authToken';
+  private tokenKey = 'authToken';
 
-  // Salva il token nel localStorage
+  /** stato reattivo: true se il token esiste */
+  private _authState$ = new BehaviorSubject<boolean>(!!localStorage.getItem(this.tokenKey));
+  authState$ = this._authState$.asObservable();
+
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
+    this._authState$.next(true);
   }
 
-  // Rimuove il token
   clearToken(): void {
     localStorage.removeItem(this.tokenKey);
+    this._authState$.next(false);
   }
 
-  // Restituisce il token (se presente)
+  logout(): void {
+    this.clearToken();
+  }
+
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
 
-  // Controlla se l'utente è autenticato
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    return this._authState$.value;
   }
 }
