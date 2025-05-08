@@ -1,1 +1,31 @@
-<p>edit-cat works!</p>
+<!-- src/app/pages/edit-cat/edit-cat.component.html -->
+<div class="edit-cat-container" *ngIf="catForm">
+    <h2>Modifica Avvistamento</h2>
+  
+    <form [formGroup]="catForm" (ngSubmit)="onSubmit()">
+      <!-- Nome -->
+      <div class="form-group">
+        <label for="name">Nome/Etichetta</label>
+        <input id="name" type="text" formControlName="name" />
+      </div>
+  
+      <!-- Descrizione -->
+      <div class="form-group">
+        <label for="description">Descrizione (Markdown supportato)</label>
+        <textarea id="description" formControlName="description"></textarea>
+      </div>
+  
+      <!-- Preview immagine corrente -->
+      <div *ngIf="previewUrl" class="preview">
+        <img [src]="previewUrl" alt="Anteprima" />
+      </div>
+  
+      <!-- Carica nuova immagine -->
+      <div class="form-group">
+        <label for="image">Sostituisci immagine (opzionale)</label>
+        <input id="image" type="file" (change)="onFileChange($event)" />
+      </div>
+  
+      <button type="submit" [disabled]="catForm.invalid">Salva modifiche</button>
+    </form>
+  </div>  

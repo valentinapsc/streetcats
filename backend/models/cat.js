@@ -19,10 +19,13 @@ const Cat = sequelize.define('Cat', {
     type: DataTypes.REAL,
     allowNull: false,
   },
-  image: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    }
+  }, {
+      timestamps: true   // aggiunge createdAt / updatedAt
+      // createdAt si popola automaticamente all’INSERT
 });
 
 module.exports = Cat;

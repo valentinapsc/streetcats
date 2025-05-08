@@ -10,6 +10,7 @@ export interface Cat {
   lat: number;
   lng: number;
   image?: string; // Potrebbe essere un URL restituito dal backend
+  createdAt: string;
 }
 
 @Injectable({
@@ -36,11 +37,15 @@ export class CatService {
     return this.http.post<Cat>(this.apiUrl, formData, { headers });
   }
 
-  updateCat(id: number, formData: FormData): Observable<Cat> {
-    return this.http.put<Cat>(`/api/cats/${id}`, formData)
+  updateCat(id: number, fd: FormData): Observable<Cat> {
+    const t = this.authService.getToken();
+    const headers = t ? new HttpHeaders({ Authorization: `Bearer ${t}` }) : undefined;
+    return this.http.put<Cat>(`${this.apiUrl}/${id}`, fd, { headers });
   }
-
+  
   deleteCat(id: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
-  }
-}
+    const t = this.authService.getToken();
+    const headers = t ? new HttpHeaders({ Authorization: `Bearer ${t}` }) : undefined;
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`, { headers });
+  }  
+}  

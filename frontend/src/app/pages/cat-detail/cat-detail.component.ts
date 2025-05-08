@@ -6,6 +6,8 @@ import { CatService, Cat } from '../../services/cat.service';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../services/notification.service';
 import { AuthService } from '../../services/auth.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { marked } from 'marked';
 
 @Component({
   selector: 'app-cat-detail',
@@ -16,30 +18,29 @@ import { AuthService } from '../../services/auth.service';
 })
 export class CatDetailComponent implements OnInit {
   cat: Cat | null = null;
+  htmlDescription!: SafeHtml;
   isLoading: boolean = true;
   errorMessage: string = '';
 
-  constructor(private route: ActivatedRoute, private catService: CatService, private notificationService: NotificationService, private router: Router, public authService: AuthService) {}
+  constructor(private route: ActivatedRoute, private catService: CatService, private notificationService: NotificationService, private router: Router, public authService: AuthService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    // Recupera l'ID dall'URL e converti in numero
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) {
-      this.catService.getCatById(id).subscribe({
-        next: (data) => {
-          this.cat = data;
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error(err);
-          this.errorMessage = 'Errore nel caricamento dei dettagli del gatto.';
-          this.isLoading = false;
-        }
-      });
-    } else {
-      this.errorMessage = 'ID non valido';
-      this.isLoading = false;
-    }
+    if (!id) { this.errorMessage = 'ID non valido'; this.isLoading = false; return; }
+
+    this.catService.getCatById(id).subscribe({
+      next: cat => {
+        this.cat = cat;
+        // Markdown → HTML → sanitizzato
+        const raw = marked.parse(cat.description) as string; 
+        this.htmlDescription = this.sanitizer.bypassSecurityTrustHtml(raw);
+        this.isLoading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Errore nel caricamento dei dettagli del gatto.';
+        this.isLoading = false;
+      }
+    });
   }
 
   onDeleteCat(): void {

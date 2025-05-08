@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 // Una chiave segreta per JWT (in produzione dovrei usare una variabile d'ambiente)
-const JWT_SECRET = 'la_tua_chiave_super_segretissima';
+const JWT_SECRET = 'la_mia_chiave_super_segretissima';
 
 exports.register = async (req, res) => {
   const { username, email, password } = req.body;

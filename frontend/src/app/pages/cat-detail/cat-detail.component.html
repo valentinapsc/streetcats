@@ -7,7 +7,14 @@
 
   <ng-template #detailBlock>
     <h2>{{ cat?.name }}</h2>
-    <p>{{ cat?.description }}</p>
+
+     <!-- DATA di inserimento formattata -->
+     <p class="date">
+      Inserito il {{ cat?.createdAt | date:'medium' }}
+    </p>
+
+    <!-- Markdown renderizzato -->
+    <div class="description" [innerHTML]="htmlDescription"> </div>
 
     <div *ngIf="cat?.image">
       <img [src]="'http://localhost:3000/uploads/' + cat?.image"
