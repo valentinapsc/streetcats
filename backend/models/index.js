@@ -1,11 +1,16 @@
 // questo file definisce la connessione al database SQLite utilizzando Sequelize
-const { Sequelize } = require('sequelize');
-const path = require('path');
+const sequelize = require('../config/db');
 
-const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: path.join(__dirname, '..', 'database.sqlite'),
-  logging: false  // Imposta a true se vuoi vedere i log delle query SQL
-});
+// import di tutti i modelli
+const Cat      = require('./Cat')(sequelize, Sequelize.DataTypes);
+const User     = require('./User')(sequelize, Sequelize.DataTypes);
+const Comment  = require('./Comment')(sequelize, Sequelize.DataTypes);
 
-module.exports = sequelize;
+// chiamata alle associate per ogni modello
+// in modo che possano essere collegate tra loro
+Object.values(sequelize.models)
+      .filter(model => typeof model.associate === 'function')
+      .forEach(model => model.associate(sequelize.models));
+
+// sincronizza il database
+sequelize.sync().then(() => console.log('DB sincronizzato'));

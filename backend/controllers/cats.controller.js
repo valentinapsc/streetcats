@@ -1,5 +1,5 @@
 // serve per gestire le richieste relative ai gatti
-const Cat = require('../models/cat');
+const Cat = require('../models/Cat');
 
 // Funzione per ottenere tutti i gatti
 // Restituisce un array di gatti in formato JSON
