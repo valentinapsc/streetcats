@@ -36,6 +36,6 @@ router.post('/', authMiddleware, upload.single('image'), catsController.createCa
 router.put('/:id', authMiddleware, upload.single('image'), catsController.updateCat);  // PUT /api/cats/:id
 router.delete('/:id', authMiddleware, catsController.deleteCat);                        // DELETE /api/cats/:id
 
-router.use('/:catId/comments', require('./comments.routes')); // Rotte per i commenti
+router.use('/:catId/comments', require('./comments.routes'));
 
 module.exports = router;

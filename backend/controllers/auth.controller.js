@@ -1,7 +1,7 @@
 // controllers/auth.controller.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const { User } = require('../models');
 
 // Una chiave segreta per JWT (in produzione dovrei usare una variabile d'ambiente)
 const JWT_SECRET = 'la_mia_chiave_super_segretissima';

@@ -26,7 +26,34 @@
       <button (click)="openEditModal()">Modifica</button>
       <button (click)="onDeleteCat()">Elimina</button>
     </div>
+
+    <!-- ----- SEZIONE COMMENTI ----- -->
+    <section class="comments">
+      <h3>Commenti</h3>
+
+      <!-- lista -->
+      <ng-container *ngIf="comments.length; else noComments">
+        <article *ngFor="let c of comments">
+          <header>{{ c.User.username }} • {{ c.createdAt | date:'short' }}</header>
+          <p>{{ c.text }}</p>
+        </article>
+      </ng-container>
+      <ng-template #noComments>
+        <p>Nessun commento.</p>
+      </ng-template>
+
+      <!-- form: visibile solo se l’utente è loggato -->
+      <form *ngIf="authService.isLoggedIn()"
+            (ngSubmit)="submitComment()">
+        <textarea [formControl]="commentCtrl"
+                  placeholder="Scrivi un commento..."
+                  rows="3"></textarea>
+        <button type="submit" [disabled]="commentCtrl.invalid">
+          Invia
+        </button>
+      </form>
+    </section>
   </ng-template>
 </div>
 
-<div *ngIf="isLoading" class="loading">Caricamento...</div>
+<div *ngIf="isLoading" class="loading">Caricamento…</div>

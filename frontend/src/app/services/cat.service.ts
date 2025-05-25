@@ -13,6 +13,14 @@ export interface Cat {
   createdAt: string;
 }
 
+// Aggiungo l'interfaccia per i commenti
+export interface Comment {
+  id: number;
+  text: string;
+  createdAt: string;
+  User: { username: string };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -47,5 +55,17 @@ export class CatService {
     const t = this.authService.getToken();
     const headers = t ? new HttpHeaders({ Authorization: `Bearer ${t}` }) : undefined;
     return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`, { headers });
-  }  
-}  
+  }
+
+  // Aggiungo il metodo per ottenere i commenti di un gatto
+  getComments(catId: number) {
+    return this.http.get<Comment[]>(`${this.apiUrl}/${catId}/comments`);
+  }
+
+  // Aggiungo il metodo per aggiungere un commento
+  addComment(catId: number, text: string) {
+    const token = this.authService.getToken();
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
+    return this.http.post<Comment>(`${this.apiUrl}/${catId}/comments`, { text }, { headers });
+  }
+}

@@ -1,24 +1,26 @@
 const { Comment, User } = require('../models');
 
 exports.list = async (req, res) => {
-  const { catId } = req.params;
-  const comments = await Comment.findAll({
-    where: { catId },
-    order: [['createdAt', 'DESC']],
-    include: [{ model: User, attributes: ['username'] }]
-  });
-  res.json(comments);
+  try {
+    const comments = await Comment.findAll({
+      where: { catId: req.params.catId },
+      order: [['createdAt', 'DESC']],
+      include: [{ model: User, attributes: ['username'] }]
+    });
+    res.json(comments);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 };
 
 exports.create = async (req, res) => {
-  const { catId } = req.params;
-  const { text }  = req.body;
+  const { text } = req.body;
   if (!text) return res.status(400).json({ error: 'Testo obbligatorio' });
 
-  const comment = await Comment.create({
-    text,
-    catId,
-    userId: req.user.id
-  });
-  res.json(comment);
+  try {
+    const comment = await Comment.create({
+      text,
+      catId: req.params.catId,
+      userId: req.user.id
+    });
+    res.json(comment);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 };
