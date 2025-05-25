@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <div class="cat-detail-container" *ngIf="!isLoading">
   <div *ngIf="errorMessage; else detailBlock">
     <p class="error">{{ errorMessage }}</p>
@@ -8,49 +6,42 @@
   <ng-template #detailBlock>
     <h2>{{ cat?.name }}</h2>
 
-     <!-- DATA di inserimento formattata -->
-     <p class="date">
+    <p class="date">
       Inserito il {{ cat?.createdAt | date:'medium' }}
     </p>
 
-    <!-- Markdown renderizzato -->
-    <div class="description" [innerHTML]="htmlDescription"> </div>
+    <div class="description" [innerHTML]="htmlDescription"></div>
 
-    <div *ngIf="cat?.image">
-      <img [src]="'http://localhost:3000/uploads/' + cat?.image"
-           [alt]="cat?.name" />
-    </div>
+    <img *ngIf="cat?.image"
+         [src]="'http://localhost:3000/uploads/' + cat?.image"
+         [alt]="cat?.name" />
 
-    <!-- azioni visibili solo se l’utente è loggato -->
-    <div *ngIf="authService.isLoggedIn()">
+    <div class="actions" *ngIf="authService.isLoggedIn()">
       <button (click)="openEditModal()">Modifica</button>
       <button (click)="onDeleteCat()">Elimina</button>
     </div>
 
-    <!-- ----- SEZIONE COMMENTI ----- -->
+    <!-- ----- COMMENTI ----- -->
     <section class="comments">
       <h3>Commenti</h3>
 
       <!-- lista -->
-      <ng-container *ngIf="comments.length; else noComments">
+      <ng-container *ngIf="comments.length; else noComm">
         <article *ngFor="let c of comments">
-          <header>{{ c.User.username }} • {{ c.createdAt | date:'short' }}</header>
+          <header>{{ c.User?.username || 'Utente' }} • {{ c.createdAt | date:'short' }}</header>
           <p>{{ c.text }}</p>
         </article>
       </ng-container>
-      <ng-template #noComments>
-        <p>Nessun commento.</p>
-      </ng-template>
+      <ng-template #noComm><p>Nessun commento.</p></ng-template>
 
-      <!-- form: visibile solo se l’utente è loggato -->
+      <!-- form -->
       <form *ngIf="authService.isLoggedIn()"
+            [formGroup]="commentForm"
             (ngSubmit)="submitComment()">
-        <textarea [formControl]="commentCtrl"
-                  placeholder="Scrivi un commento..."
+        <textarea formControlName="text"
+                  placeholder="Scrivi un commento…"
                   rows="3"></textarea>
-        <button type="submit" [disabled]="commentCtrl.invalid">
-          Invia
-        </button>
+        <button type="submit" [disabled]="commentForm.invalid">Invia</button>
       </form>
     </section>
   </ng-template>

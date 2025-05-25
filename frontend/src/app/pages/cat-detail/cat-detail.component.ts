@@ -1,8 +1,9 @@
+// src/app/pages/cat-detail/cat-detail.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { marked } from 'marked';
 
 import { CatService, Cat, Comment } from '../../services/cat.service';
@@ -21,7 +22,7 @@ export class CatDetailComponent implements OnInit {
   htmlDescription!: SafeHtml;
 
   comments: Comment[] = [];
-  commentCtrl: any;
+  commentForm!: FormGroup; 
 
   isLoading = true;
   errorMessage = '';
@@ -34,11 +35,14 @@ export class CatDetailComponent implements OnInit {
     public  authService: AuthService,
     private sanitizer: DomSanitizer,
     private fb: FormBuilder
-  ) {
-    this.commentCtrl = this.fb.control('', Validators.required);
-  }
+  ) {}
 
   ngOnInit(): void {
+    /* inizializza il form una sola volta */
+    this.commentForm = this.fb.group({
+      text: ['', [Validators.required, Validators.pattern(/\S+/)]]   // almeno un non-spazio
+    });
+
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!id) { this.errorMessage = 'ID non valido'; this.isLoading = false; return; }
 
@@ -46,50 +50,47 @@ export class CatDetailComponent implements OnInit {
       next: cat => {
         this.cat = cat;
         this.htmlDescription = this.sanitizeMarkdown(cat.description);
-        this.loadComments();          // carica i commenti
+        this.loadComments();
         this.isLoading = false;
       },
-      error: () => {
-        this.errorMessage = 'Errore nel caricamento dei dettagli del gatto.';
-        this.isLoading = false;
-      }
+      error: () => { this.errorMessage = 'Errore nel caricamento'; this.isLoading = false; }
     });
   }
 
+  /* ========== helper ========== */
   private sanitizeMarkdown(md: string): SafeHtml {
-    const rawHtml = marked.parse(md) as string;
-    return this.sanitizer.bypassSecurityTrustHtml(rawHtml);
+    return this.sanitizer.bypassSecurityTrustHtml(marked.parse(md) as string);
   }
 
+  /* ========== commenti ========== */
   private loadComments(): void {
-    if (!this.cat) return;
-    this.catService.getComments(this.cat!.id!).subscribe({
+    if (!this.cat?.id) return;
+    this.catService.getComments(this.cat.id).subscribe({
       next: c => (this.comments = c),
       error: () => this.notify.show('Errore nel caricamento commenti', 3000)
     });
   }
 
   submitComment(): void {
-    if (this.commentCtrl.invalid || !this.cat || this.cat.id === undefined) return;
-    const text = this.commentCtrl.value!;
-    this.catService.addComment(this.cat.id!, text).subscribe({
+    if (this.commentForm.invalid || !this.cat?.id) return;
+
+    const text = this.commentForm.value.text.trim();
+    this.catService.addComment(this.cat.id, text).subscribe({
       next: c => {
-        this.comments.unshift(c);      // aggiorna la lista subito
-        this.commentCtrl.reset();
+        this.comments.unshift(c);        // aggiorna subito la lista
+        this.commentForm.reset();        // svuota textarea
       },
       error: () => this.notify.show('Errore nell\'invio commento', 3000)
     });
   }
 
+  /* ========== azioni gatto ========== */
   onDeleteCat(): void {
-    if (!this.cat || this.cat.id === undefined) return;
+    if (!this.cat?.id) return;
     if (!confirm('Sei sicuro di voler eliminare questo gatto?')) return;
 
     this.catService.deleteCat(this.cat.id).subscribe({
-      next: () => {
-        this.notify.show('Gatto eliminato con successo');
-        this.router.navigate(['/']);
-      },
+      next: () => { this.notify.show('Gatto eliminato'); this.router.navigate(['/']); },
       error: () => this.notify.show('Errore nell\'eliminazione', 4000)
     });
   }

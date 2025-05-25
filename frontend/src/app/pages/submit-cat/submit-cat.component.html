@@ -26,9 +26,10 @@
 
     <!-- Picker posizione -->
     <div class="form-group">
-      <label for="locationPicker">Seleziona la posizione sulla mappa:</label>
-      <app-location-picker id="locationPicker"
-                           (locationSelected)="updateLocation($event)">
+      <label id="map-desc">Seleziona la posizione sulla mappa:</label>
+      <app-location-picker
+       aria-labelledby="map-desc"
+       (locationSelected)="updateLocation($event)">
       </app-location-picker>
     </div>
 
