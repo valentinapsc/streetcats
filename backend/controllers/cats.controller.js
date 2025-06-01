@@ -1,5 +1,5 @@
 // serve per gestire le richieste relative ai gatti
-const { Cat } = require('../models');
+const { Cat } = require("../models"); // Importa il modello Cat per accedere ai dati dei gatti
 
 // Funzione per ottenere tutti i gatti
 // Restituisce un array di gatti in formato JSON
@@ -17,7 +17,7 @@ exports.getCatById = async (req, res) => {
   try {
     const cat = await Cat.findByPk(req.params.id);
     if (!cat) {
-      return res.status(404).json({ error: 'Gatto non trovato' });
+      return res.status(404).json({ error: "Gatto non trovato" });
     }
     res.json(cat);
   } catch (error) {
@@ -27,12 +27,17 @@ exports.getCatById = async (req, res) => {
 
 // Funzione per creare un nuovo gatto
 // Utilizza multer per gestire il file upload (multer è un middleware per gestire i file multipart/form-data)
+// Lat e lng sono convertiti in numeri decimali dopo che sono stati ricevuti come stringhe
 exports.createCat = async (req, res) => {
   const { name, description, lat, lng } = req.body;
   const image = req.file ? req.file.filename : null;
 
   if (!name || !description || !lat || !lng) {
-    return res.status(400).json({ error: 'I campi name, description, lat e lng sono obbligatori.' });
+    return res
+      .status(400)
+      .json({
+        error: "I campi name, description, lat e lng sono obbligatori.",
+      });
   }
 
   try {
@@ -59,7 +64,7 @@ exports.updateCat = async (req, res) => {
   try {
     const cat = await Cat.findByPk(id);
     if (!cat) {
-      return res.status(404).json({ error: 'Gatto non trovato' });
+      return res.status(404).json({ error: "Gatto non trovato" });
     }
     // Aggiorna i campi, se sono stati forniti nel body
     cat.name = name || cat.name;
@@ -82,10 +87,10 @@ exports.deleteCat = async (req, res) => {
   try {
     const cat = await Cat.findByPk(id);
     if (!cat) {
-      return res.status(404).json({ error: 'Gatto non trovato' });
+      return res.status(404).json({ error: "Gatto non trovato" });
     }
     await cat.destroy();
-    res.json({ message: 'Gatto eliminato con successo' });
+    res.json({ message: "Gatto eliminato con successo" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

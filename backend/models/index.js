@@ -1,22 +1,24 @@
-const { Sequelize, DataTypes } = require('sequelize');
+// Definisci i modelli Sequelize per il progetto
+// Questo file importa Sequelize, definisce i modelli e le associazioni tra di essi.
 
-// 1.  CREA L'ISTANZA SEQUELIZE 
+const { Sequelize, DataTypes } = require("sequelize");
+
+// CREA L'ISTANZA SEQUELIZE
 const sequelize = new Sequelize({
-  dialect : 'sqlite',
-  storage : './db.sqlite',
-  logging : false                 // true se vuoi loggare le query
+  dialect: "sqlite",
+  storage: "./db.sqlite",
+  logging: false, // true se vuoi loggare le query
 });
 
-// 2.  IMPORTA MODELLI (pattern factory)
-const Cat     = require('./Cat')(sequelize, DataTypes);
-const User    = require('./User')(sequelize, DataTypes);
-const Comment = require('./Comment')(sequelize, DataTypes);
+// IMPORTA MODELLI (pattern factory perchè ogni modello è una funzione che accetta sequelize e DataTypes)
+const Cat = require("./Cat")(sequelize, DataTypes);
+const User = require("./User")(sequelize, DataTypes);
+const Comment = require("./Comment")(sequelize, DataTypes);
 
-// 3.  REGISTRA ASSOCIAZIONI se il modello espone .associate()
-
+// REGISTRA ASSOCIAZIONI se il modello espone .associate()
 Object.values(sequelize.models)
-  .filter(model => typeof model.associate === 'function')
-  .forEach(model => model.associate(sequelize.models));
+  .filter((model) => typeof model.associate === "function")
+  .forEach((model) => model.associate(sequelize.models));
 
 /*  Esempio:
 Cat.belongsTo(User,    { foreignKey:'userId' });
@@ -25,15 +27,17 @@ Comment.belongsTo(Cat, { foreignKey:'catId' });
 Comment.belongsTo(User,{ foreignKey:'userId' });
 */
 
-// 4. Sincronizza subito in sviluppo
-
-if (process.env.NODE_ENV === 'development') {
-  sequelize.sync({ alter: true })
-           .then(() => console.log('📄 DB sincronizzato (dev)'))
-           .catch(err => console.error('Errore sync:', err));
+// Sincronizza subito in sviluppo, cioè crea le tabelle se non esistono
+// e aggiorna le colonne se necessario (alter: true)
+if (process.env.NODE_ENV === "development") {
+  sequelize
+    .sync({ alter: true })
+    .then(() => console.log("📄 DB sincronizzato (dev)"))
+    .catch((err) => console.error("Errore sync:", err));
 }
 
-// 5.  EXPORT così nei controller faccio:
-//       const { Cat } = require('../models');
+// EXPORT così nei controller faccio:
+// const { Cat } = require('../models');
+// e posso accedere ai metodi dei modelli come Cat.findAll(), User.create(), etc.
 
 module.exports = { sequelize, Cat, User, Comment };

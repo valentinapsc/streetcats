@@ -1,12 +1,12 @@
-// In questo file abbiamo definito le rotte per il nostro API RESTful per i gatti.
-// Abbiamo anche configurato multer per gestire l'upload delle immagini e creato una cartella per gli upload se non esiste già.const express = require('express');
+// In questo file abbiamo definito le rotte per API RESTful per i gatti.
+// Abbiamo anche configurato multer per gestire l'upload delle immagini e creato una cartella per gli upload se non esiste già.
 
-const express = require('express');
-const router = express.Router();
+const express = require('express'); 
+const router = express.Router(); 
 const catsController = require('../controllers/cats.controller.js');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const multer = require('multer'); 
+const path = require('path'); 
+const fs = require('fs'); // Importa il modulo fs per gestire il file system
 const authMiddleware = require('../middleware/auth.middleware');
 
 // Configura la cartella per gli upload
