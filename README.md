@@ -40,11 +40,11 @@ cd streetcats
 ```sh
 cd backend
 npm install
-npm run dev               # nodemon + auto-sync Sequelize
+node index.js               
 ```
 # 2. frontend (nuovo terminale)
 ```sh
 cd ../frontend
 npm install
-npm run dev               # http://localhost:4200
+ng serve               # http://localhost:4200
 ```
