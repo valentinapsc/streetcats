@@ -2,9 +2,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #2b2b2b;
+  background-color: #c05005;
   padding: 1rem 2rem;
   color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   .logo {
     display: flex;
@@ -27,13 +28,13 @@
   .nav-links {
     display: flex;
     gap: 1.5rem;
-  
+
     a {
       color: #fff;
       font-weight: 500;
       text-decoration: none;
       transition: color 0.3s ease;
-  
+
       &:hover {
         color: #ffa726;
       }

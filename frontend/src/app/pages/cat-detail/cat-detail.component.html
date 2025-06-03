@@ -6,15 +6,15 @@
   <ng-template #detailBlock>
     <h2>{{ cat?.name }}</h2>
 
-    <p class="date">
-      Inserito il {{ cat?.createdAt | date:'medium' }}
-    </p>
+    <p class="date">Inserito il {{ cat?.createdAt | date : "medium" }}</p>
 
     <div class="description" [innerHTML]="htmlDescription"></div>
 
-    <img *ngIf="cat?.image"
-         [src]="'http://localhost:3000/uploads/' + cat?.image"
-         [alt]="cat?.name" />
+    <img
+      *ngIf="cat?.image"
+      [src]="'http://localhost:3000/uploads/' + cat?.image"
+      [alt]="cat?.name"
+    />
 
     <div class="actions" *ngIf="authService.isLoggedIn()">
       <button (click)="openEditModal()">Modifica</button>
@@ -28,19 +28,25 @@
       <!-- lista -->
       <ng-container *ngIf="comments.length; else noComm">
         <article *ngFor="let c of comments">
-          <header>{{ c.User?.username || 'Utente' }} • {{ c.createdAt | date:'short' }}</header>
+          <header>
+            {{ c.User.username }} • {{ c.createdAt | date : "short" }}
+          </header>
           <p>{{ c.text }}</p>
         </article>
       </ng-container>
       <ng-template #noComm><p>Nessun commento.</p></ng-template>
 
       <!-- form -->
-      <form *ngIf="authService.isLoggedIn()"
-            [formGroup]="commentForm"
-            (ngSubmit)="submitComment()">
-        <textarea formControlName="text"
-                  placeholder="Scrivi un commento…"
-                  rows="3"></textarea>
+      <form
+        *ngIf="authService.isLoggedIn()"
+        [formGroup]="commentForm"
+        (ngSubmit)="submitComment()"
+      >
+        <textarea
+          formControlName="text"
+          placeholder="Scrivi un commento…"
+          rows="3"
+        ></textarea>
         <button type="submit" [disabled]="commentForm.invalid">Invia</button>
       </form>
     </section>

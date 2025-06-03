@@ -27,8 +27,13 @@ exports.create = async (req, res) => {
       catId: req.params.catId,
       userId: req.user.id,
     });
-    res.json(comment);
+
+    const created = await Comment.findByPk(comment.id, {
+      include: [{ model: User, attributes: ["id", "username"] }],
+    });
+
+    return res.status(201).json(created);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: e.message });
   }
 };

@@ -1,6 +1,30 @@
 // Definisci i modelli Sequelize per il progetto
 // Questo file importa Sequelize, definisce i modelli e le associazioni tra di essi.
 
+module.exports = (sequelize, DataTypes) => {
+  const Comment = sequelize.define(
+    "Comment",
+    {
+      text: { type: DataTypes.TEXT, allowNull: false },
+      catId: { type: DataTypes.INTEGER, allowNull: false },
+      userId: { type: DataTypes.INTEGER, allowNull: false },
+    },
+    {
+      timestamps: true,
+    }
+  );
+
+  Comment.associate = (models) => {
+    Comment.belongsTo(models.Cat, { foreignKey: "catId", onDelete: "CASCADE" });
+    Comment.belongsTo(models.User, {
+      foreignKey: "userId",
+      onDelete: "CASCADE",
+    });
+  };
+
+  return Comment;
+};
+
 const { Sequelize, DataTypes } = require("sequelize");
 
 // CREA L'ISTANZA SEQUELIZE

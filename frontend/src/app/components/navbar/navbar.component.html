@@ -5,9 +5,8 @@
     <a routerLink="/">StreetCats</a>
   </div>
   <ul class="nav-links">
-    <li><a routerLink="/">Home</a></li>
     <li><a routerLink="/submit">Segnala</a></li>
-    
+
     <!-- area autenticazione -->
     <ng-container *ngIf="auth.isLoggedIn(); else guestLinks">
       <li><a href="javascript:void(0)" (click)="logout()">Logout</a></li>
