@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service'; 
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth-modal',
@@ -19,7 +20,7 @@ export class AuthModalComponent {
   registerForm: FormGroup;
   errorMessage = '';
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -54,8 +55,9 @@ export class AuthModalComponent {
       .subscribe({
         next: res => {
           console.log('Login successo', res);
-          this.authService.setToken(res.token);   //  ← salva!
+          this.authService.setToken(res.token); // Salva il token nel servizio di autenticazione 
           this.closeModal();
+          this.router.navigate(['/']); // Reindirizza alla home o alla pagina desiderata
         },
         error: (err) => {
           console.error(err);
@@ -72,7 +74,7 @@ export class AuthModalComponent {
       .subscribe({
         next: (res) => {
           console.log('Registrazione riuscita', res);
-          // Puoi eventualmente passare automaticamente in modalità login oppure loggare l'utente
+          // loggare l'utente
           this.toggleMode();
         },
         error: (err) => {

@@ -24,7 +24,7 @@ export class NavbarComponent {
   
   logout(): void {
     this.auth.logout();
-    this.router.navigate(['/home']);
+    this.router.navigate(['/']);
   }
   
   openAuthModal() {
