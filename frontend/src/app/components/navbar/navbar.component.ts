@@ -21,6 +21,16 @@ export class NavbarComponent {
   @ViewChild('authModal') authModal: AuthModalComponent | undefined;
   
   constructor(public auth: AuthService, private router: Router) {}
+
+   onSegnalaClick() {
+    if (this.auth.isLoggedIn()) {
+      // se è già loggato, naviga a /submit
+      this.router.navigate(['/submit']);
+    } else {
+      // altrimenti, apri il modal di login/registrazione
+      this.authModal?.openModal();
+    }
+  }
   
   logout(): void {
     this.auth.logout();
