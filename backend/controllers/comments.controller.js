@@ -1,39 +1,42 @@
-const { Comment, User } = require("../models"); // Importa i modelli Comment e User per accedere ai dati dei commenti e degli utenti
+import { Comment, User } from '../models/index.js';
 
-// Funzione per ottenere tutti i commenti di una categoria
-// Restituisce un array di commenti in formato JSON, ordinati per data di creazione
-exports.list = async (req, res) => {
+// GET /api/cats/:catId/comments
+export async function list(req, res) {
   try {
     const comments = await Comment.findAll({
       where: { catId: req.params.catId },
-      order: [["createdAt", "DESC"]],
-      include: [{ model: User, attributes: ["username"] }],
+      order: [['createdAt', 'DESC']],
+      include: [{ model: User, attributes: ['id', 'username'] }]
     });
-    res.json(comments);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+    return res.json(comments);
+  } catch (err) {
+    console.error('Errore listComments:', err);
+    return res.status(500).json({ error: err.message });
   }
-};
+}
 
-// Funzione per creare un nuovo commento
-// Utilizza il modello Comment per creare un nuovo commento associato a una categoria e all'utente autenticato
-exports.create = async (req, res) => {
+// POST /api/cats/:catId/comments
+export async function create(req, res) {
   const { text } = req.body;
-  if (!text) return res.status(400).json({ error: "Testo obbligatorio" });
+  if (!text) {
+    return res.status(400).json({ error: 'Testo obbligatorio.' });
+  }
 
   try {
-    const comment = await Comment.create({
-      text,
-      catId: req.params.catId,
-      userId: req.user.id,
-    });
+    const userId = req.user.id;
+    const catId  = parseInt(req.params.catId, 10);
 
+    // 1) creo il commento
+    const comment = await Comment.create({ text, catId, userId });
+
+    // 2) ricarico con l’associazione User
     const created = await Comment.findByPk(comment.id, {
-      include: [{ model: User, attributes: ["id", "username"] }],
+      include: [{ model: User, attributes: ['id', 'username'] }]
     });
 
     return res.status(201).json(created);
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
+  } catch (err) {
+    console.error('Errore createComment:', err);
+    return res.status(500).json({ error: err.message });
   }
-};
+}

@@ -1,31 +1,64 @@
 .edit-cat-container {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    background: #fffdf6;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.1);
-  
-    h2 { text-align: center; margin-bottom: 1rem; }
-  
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 1rem;
-  
-      label { font-weight: 600; margin-bottom: .25rem; }
-      input, textarea { padding: .6rem; border: 1px solid #ccc; border-radius: 4px; }
-      textarea { resize: vertical; min-height: 120px; }
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #fffdf6;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+
+    label {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
     }
-  
-    .preview img { max-width: 100%; margin-bottom: 1rem; border-radius: 4px; }
-  
-    button {
-      padding: .7rem 1.2rem;
-      background: #2b2b2b;
-      color: #fff;
-      border: none;
+    input,
+    textarea {
+      padding: 0.6rem;
+      border: 1px solid #ccc;
       border-radius: 4px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+  }
+
+  .preview img {
+    max-width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    button {
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
-  }  
+
+    button[type="submit"] {
+      background-color: #222;
+      color: white;
+    }
+
+    button[type="button"] {
+      background-color: #e0e0e0;
+      color: black;
+    }
+  }
+}

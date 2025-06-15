@@ -11,6 +11,8 @@ import { NotificationComponent } from './components/notification/notification.co
     <app-navbar></app-navbar>
     <app-notification></app-notification>
     <router-outlet></router-outlet>
-  `
+  `,
 })
-export class AppComponent {}
+export class AppComponent {
+  title = 'streetcats';
+}

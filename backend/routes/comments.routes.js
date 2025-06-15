@@ -1,11 +1,11 @@
 // Questo file definisce le rotte per gestire i commenti sui gatti, inclusa la visualizzazione e la creazione di commenti.
 
-const express = require("express");
-const router = express.Router({ mergeParams: true });
-const auth = require("../middleware/auth.middleware");
-const comments = require("../controllers/comments.controller");
+import { Router } from 'express';
+import { list, create } from '../controllers/comments.controller.js';
+import authMiddleware from '../middleware/auth.js';
 
-router.get("/", comments.list); // /api/cats/:catId/comments
-router.post("/", auth, comments.create); // protetto
+const router = Router({ mergeParams: true });
+router.get('/', list);
+router.post('/', authMiddleware, create);
 
-module.exports = router;
+export default router;

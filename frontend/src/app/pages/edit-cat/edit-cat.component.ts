@@ -1,40 +1,54 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CatService, Cat } from '../../services/cat.service';
 import { NotificationService } from '../../services/notification.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-edit-cat',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './edit-cat.component.html',
-  styleUrls: ['./edit-cat.component.scss']
+  styleUrls: ['./edit-cat.component.scss'],
 })
 export class EditCatComponent implements OnInit {
   catForm!: FormGroup;
   id!: number;
   initialCat!: Cat;
   previewUrl: string | null = null;
+  updateError = '';
 
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private catService: CatService,
     private notify: NotificationService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
     this.id = +this.route.snapshot.paramMap.get('id')!;
     this.catService.getCatById(this.id).subscribe({
-      next: cat => {
+      next: (cat) => {
         this.initialCat = cat;
         this.catForm = this.fb.group({
-          name:        [cat.name,        Validators.required],
-          description: [cat.description, Validators.required],
-          image:       [null]            // file (opzionale)
+          name: [
+            cat.name || '',
+            [Validators.required, Validators.minLength(2)],
+          ],
+          description: [
+            cat.description || '',
+            [Validators.required, Validators.minLength(10)],
+          ],
+          image: [null], // file (opzionale)
         });
         if (cat.image) {
           this.previewUrl = `http://localhost:3000/uploads/${cat.image}`;
@@ -43,7 +57,7 @@ export class EditCatComponent implements OnInit {
       error: () => {
         this.notify.show('Gatto non trovato');
         this.router.navigate(['/']);
-      }
+      },
     });
   }
 
@@ -63,7 +77,7 @@ export class EditCatComponent implements OnInit {
     if (this.catForm.invalid) return;
 
     const fd = new FormData();
-    fd.append('name',        this.catForm.value.name);
+    fd.append('name', this.catForm.value.name);
     fd.append('description', this.catForm.value.description);
 
     const newImage: File | null = this.catForm.value.image;
@@ -71,10 +85,19 @@ export class EditCatComponent implements OnInit {
 
     this.catService.updateCat(this.id, fd).subscribe({
       next: () => {
+        // reset dell’errore
+        this.updateError = '';
         this.notify.show('Gatto aggiornato con successo');
         this.router.navigate(['/cat', this.id]);
       },
-      error: () => this.notify.show('Errore nell’aggiornamento', 4000)
+      error: () => {
+        this.updateError = 'Errore nell’aggiornamento'; // ***
+        this.notify.show('Errore nell’aggiornamento', 4000);
+      },
     });
+  }
+
+  onCancel(): void {
+    this.location.back(); // torna alla pagina precedente
   }
 }

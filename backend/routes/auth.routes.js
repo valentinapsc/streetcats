@@ -1,13 +1,11 @@
-// File per la gestione delle rotte di autenticazione
+import { Router } from 'express';
+import { register, login } from '../controllers/auth.controller.js';
 
-const express = require("express"); // Importa il modulo express per creare il router
-const router = express.Router(); // Crea un nuovo router per gestire le rotte di autenticazione
-const authController = require("../controllers/auth.controller"); // Importa il controller per l'autenticazione
+const router = Router();
 
-// Endpoint per registrazione
-router.post("/register", authController.register);
+// POST /api/auth/register
+router.post('/register', register);
+// POST /api/auth/login
+router.post('/login', login);
 
-// Endpoint per login
-router.post("/login", authController.login);
-
-module.exports = router; // Esporta il router per poterlo utilizzare in altri file
+export default router;

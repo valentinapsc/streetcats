@@ -1,41 +1,37 @@
-// In questo file abbiamo definito le rotte per API RESTful per i gatti.
-// Abbiamo anche configurato multer per gestire l'upload delle immagini e creato una cartella per gli upload se non esiste già.
+import { Router } from 'express';
+import multer from 'multer';
+import path from 'path';
+import {
+  getAllCats,
+  getCatById,
+  createCat,
+  updateCat,
+  deleteCat
+} from '../controllers/cats.controller.js';
+import authMiddleware from '../middleware/auth.js';
 
-const express = require('express'); 
-const router = express.Router(); 
-const catsController = require('../controllers/cats.controller.js');
-const multer = require('multer'); 
-const path = require('path'); 
-const fs = require('fs'); // Importa il modulo fs per gestire il file system
-const authMiddleware = require('../middleware/auth.middleware');
-
-// Configura la cartella per gli upload
-const uploadsDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-}
-
-// Configura multer per gestire l'upload dei file
+// Setup multer storage
+const uploadsDir = path.join(process.cwd(), 'uploads');
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
+  destination: (req, file, cb) => cb(null, uploadsDir),
+  filename:    (req, file, cb) => {
+    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, `${unique}-${file.originalname}`);
   }
 });
 const upload = multer({ storage });
 
-// Rotte di sola lettura (disponibili a tutti)
-router.get('/', catsController.getAllCats);             // GET /api/cats
-router.get('/:id', catsController.getCatById);            // GET /api/cats/:id
+const router = Router();
 
-// Rotte protette: solo per utenti autenticati
-router.post('/', authMiddleware, upload.single('image'), catsController.createCat);  // POST /api/cats
-router.put('/:id', authMiddleware, upload.single('image'), catsController.updateCat);  // PUT /api/cats/:id
-router.delete('/:id', authMiddleware, catsController.deleteCat);                        // DELETE /api/cats/:id
+// GET    /api/cats
+router.get('/', getAllCats);
+// GET    /api/cats/:id
+router.get('/:id', getCatById);
+// POST   /api/cats    (protetto)
+router.post('/', authMiddleware, upload.single('image'), createCat);
+// PUT    /api/cats/:id (protetto)
+router.put('/:id', authMiddleware, upload.single('image'), updateCat);
+// DELETE /api/cats/:id (protetto)
+router.delete('/:id', authMiddleware, deleteCat);
 
-router.use('/:catId/comments', require('./comments.routes'));
-
-module.exports = router;
+export default router;

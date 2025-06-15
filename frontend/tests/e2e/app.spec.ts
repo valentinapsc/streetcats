@@ -10,7 +10,6 @@ const testUser = {
 test.use({ baseURL: 'http://localhost:4200' });
 
 test.describe('StreetCats End-to-End', () => {
-
   test.beforeEach(async ({ page }) => {
     // Navigate to the home page before each test
     await page.goto('/');
@@ -56,12 +55,18 @@ test.describe('StreetCats End-to-End', () => {
     await expect(page).toHaveURL('/');
   });
 
-  test(' 7. Modifiche non autorizzate mostrano errore', async ({
-    page,
-  }) => {
+  test('7. Modifiche non autorizzate mostrano errore', async ({ page }) => {
     await page.goto('/edit-cat/1');
+
+    // Lascia i campi come sono oppure modifica se necessario
+    // Prova a inviare il form senza autorizzazione
     await page.locator('button[type="submit"]').click();
-    await expect(page.locator('text=Errore nell’aggiornamento')).toBeVisible();
+
+    // Attendi eventuali richieste di rete
+    await page.waitForTimeout(500); // o meglio: aspetta l'evento giusto se disponibile
+
+    // Controlla che l'errore sia visibile
+    await expect(page.locator('p.error')).toHaveText('Errore nell’aggiornamento');
   });
 
   test('8. Navbar mostra il titolo del sito', async ({ page }) => {

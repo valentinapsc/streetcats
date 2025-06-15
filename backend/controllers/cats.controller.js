@@ -1,97 +1,85 @@
-// serve per gestire le richieste relative ai gatti
-const { Cat } = require("../models"); // Importa il modello Cat per accedere ai dati dei gatti
+import fs from 'fs';
+import path from 'path';
+import { Cat } from '../models/index.js';
 
-// Funzione per ottenere tutti i gatti
-// Restituisce un array di gatti in formato JSON
-exports.getAllCats = async (req, res) => {
+// GET /api/cats
+export async function getAllCats(req, res) {
   try {
     const cats = await Cat.findAll();
-    res.json(cats);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.json(cats);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
   }
-};
+}
 
-// Funzione per ottenere un gatto specifico
-exports.getCatById = async (req, res) => {
+// GET /api/cats/:id
+export async function getCatById(req, res) {
   try {
     const cat = await Cat.findByPk(req.params.id);
-    if (!cat) {
-      return res.status(404).json({ error: "Gatto non trovato" });
-    }
-    res.json(cat);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    if (!cat) return res.status(404).json({ error: 'Gatto non trovato' });
+    return res.json(cat);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
   }
-};
+}
 
-// Funzione per creare un nuovo gatto
-// Utilizza multer per gestire il file upload (multer è un middleware per gestire i file multipart/form-data)
-// Lat e lng sono convertiti in numeri decimali dopo che sono stati ricevuti come stringhe
-exports.createCat = async (req, res) => {
-  const { name, description, lat, lng } = req.body;
-  const image = req.file ? req.file.filename : null;
-
-  if (!name || !description || !lat || !lng) {
-    return res
-      .status(400)
-      .json({
-        error: "I campi name, description, lat e lng sono obbligatori.",
-      });
-  }
-
+// POST /api/cats
+export async function createCat(req, res) {
   try {
+    const { name, description, lat, lng } = req.body;
+    if (!name || !description || !lat || !lng) {
+      return res.status(400).json({ error: 'Campi obbligatori mancanti.' });
+    }
+    const image = req.file?.filename || null;
     const newCat = await Cat.create({
       name,
       description,
       lat: parseFloat(lat),
       lng: parseFloat(lng),
-      image,
+      image
     });
-    res.json(newCat);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(201).json(newCat);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
   }
-};
+}
 
-// Funzione per aggiornare un gatto
-exports.updateCat = async (req, res) => {
-  const id = req.params.id;
-  const { name, description, lat, lng } = req.body;
-  // Se viene caricato un nuovo file, usiamo il suo filename
-  const image = req.file ? req.file.filename : null;
-
+// PUT /api/cats/:id
+export async function updateCat(req, res) {
   try {
-    const cat = await Cat.findByPk(id);
-    if (!cat) {
-      return res.status(404).json({ error: "Gatto non trovato" });
-    }
-    // Aggiorna i campi, se sono stati forniti nel body
-    cat.name = name || cat.name;
-    cat.description = description || cat.description;
-    cat.lat = lat ? parseFloat(lat) : cat.lat;
-    cat.lng = lng ? parseFloat(lng) : cat.lng;
-    if (image) {
-      cat.image = image;
+    const cat = await Cat.findByPk(req.params.id);
+    if (!cat) return res.status(404).json({ error: 'Gatto non trovato' });
+    const { name, description, lat, lng } = req.body;
+    if (name) cat.name = name;
+    if (description) cat.description = description;
+    if (lat)  cat.lat = parseFloat(lat);
+    if (lng)  cat.lng = parseFloat(lng);
+    if (req.file) {
+      // rimuovi vecchia immagine
+      if (cat.image) fs.unlinkSync(path.join(process.cwd(), 'uploads', cat.image));
+      cat.image = req.file.filename;
     }
     await cat.save();
-    res.json(cat);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.json(cat);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
   }
-};
+}
 
-// Funzione per cancellare un gatto
-exports.deleteCat = async (req, res) => {
-  const id = req.params.id;
+// DELETE /api/cats/:id
+export async function deleteCat(req, res) {
   try {
-    const cat = await Cat.findByPk(id);
-    if (!cat) {
-      return res.status(404).json({ error: "Gatto non trovato" });
-    }
+    const cat = await Cat.findByPk(req.params.id);
+    if (!cat) return res.status(404).json({ error: 'Gatto non trovato' });
+    if (cat.image) fs.unlinkSync(path.join(process.cwd(), 'uploads', cat.image));
     await cat.destroy();
-    res.json({ message: "Gatto eliminato con successo" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.json({ message: 'Gatto eliminato con successo' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
   }
-};
+}

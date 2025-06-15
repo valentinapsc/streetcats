@@ -1,31 +1,64 @@
 <!-- src/app/pages/edit-cat/edit-cat.component.html -->
 <div class="edit-cat-container" *ngIf="catForm">
-    <h2>Modifica Avvistamento</h2>
-  
-    <form [formGroup]="catForm" (ngSubmit)="onSubmit()">
-      <!-- Nome -->
-      <div class="form-group">
-        <label for="name">Nome/Etichetta</label>
-        <input id="name" type="text" formControlName="name" />
+  <h2>Modifica Avvistamento</h2>
+
+  <form [formGroup]="catForm" (ngSubmit)="onSubmit()">
+    <!-- Nome -->
+    <div class="form-group">
+      <label for="name">Nome/Etichetta</label>
+      <input id="name" type="text" formControlName="name" />
+      <div
+        class="error"
+        *ngIf="catForm.get('name')?.touched && catForm.get('name')?.invalid"
+      >
+        <p *ngIf="catForm.get('name')?.errors?.['required']">
+          Il nome è obbligatorio.
+        </p>
+        <p *ngIf="catForm.get('name')?.errors?.['minlength']">
+          Il nome deve avere almeno 2 caratteri.
+        </p>
       </div>
-  
-      <!-- Descrizione -->
-      <div class="form-group">
-        <label for="description">Descrizione (Markdown supportato)</label>
-        <textarea id="description" formControlName="description"></textarea>
+    </div>
+
+    <!-- Descrizione -->
+    <div class="form-group">
+      <label for="description">Descrizione (Markdown supportato)</label>
+      <textarea id="description" formControlName="description"></textarea>
+      <div
+        class="error"
+        *ngIf="
+          catForm.get('description')?.touched &&
+          catForm.get('description')?.invalid
+        "
+      >
+        <p *ngIf="catForm.get('description')?.errors?.['required']">
+          La descrizione è obbligatoria.
+        </p>
+        <p *ngIf="catForm.get('description')?.errors?.['minlength']">
+          La descrizione è troppo breve.
+        </p>
       </div>
-  
-      <!-- Preview immagine corrente -->
-      <div *ngIf="previewUrl" class="preview">
-        <img [src]="previewUrl" alt="Anteprima" />
-      </div>
-  
-      <!-- Carica nuova immagine -->
-      <div class="form-group">
-        <label for="image">Sostituisci immagine (opzionale)</label>
-        <input id="image" type="file" (change)="onFileChange($event)" />
-      </div>
-  
+    </div>
+
+    <!-- Preview immagine corrente -->
+    <div *ngIf="previewUrl" class="preview">
+      <img [src]="previewUrl" alt="Anteprima" />
+    </div>
+
+    <!-- Carica nuova immagine -->
+    <div class="form-group">
+      <label for="image">Sostituisci immagine (opzionale)</label>
+      <input id="image" type="file" (change)="onFileChange($event)" />
+    </div>
+
+    <!-- Messaggio di errore -->
+    <div *ngIf="updateError" class="form-group">
+      <p class="error">{{ updateError }}</p>
+    </div>
+
+    <div class="button-group">
       <button type="submit" [disabled]="catForm.invalid">Salva modifiche</button>
-    </form>
-  </div>  
+      <button type="button" (click)="onCancel()">Annulla</button>
+    </div>
+  </form>
+</div>

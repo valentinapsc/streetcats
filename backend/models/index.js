@@ -1,67 +1,36 @@
-// Definisci i modelli Sequelize per il progetto
-// Questo file importa Sequelize, definisce i modelli e le associazioni tra di essi.
+import { Sequelize, DataTypes } from 'sequelize';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-module.exports = (sequelize, DataTypes) => {
-  const Comment = sequelize.define(
-    "Comment",
-    {
-      text: { type: DataTypes.TEXT, allowNull: false },
-      catId: { type: DataTypes.INTEGER, allowNull: false },
-      userId: { type: DataTypes.INTEGER, allowNull: false },
-    },
-    {
-      timestamps: true,
-    }
-  );
+// __dirname 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-  Comment.associate = (models) => {
-    Comment.belongsTo(models.Cat, { foreignKey: "catId", onDelete: "CASCADE" });
-    Comment.belongsTo(models.User, {
-      foreignKey: "userId",
-      onDelete: "CASCADE",
-    });
-  };
-
-  return Comment;
-};
-
-const { Sequelize, DataTypes } = require("sequelize");
-
-// CREA L'ISTANZA SEQUELIZE
+// Instanza di Sequelize con SQLite
 const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: "./db.sqlite",
-  logging: false, // true se vuoi loggare le query
+  dialect : 'sqlite',
+  storage : path.join(__dirname, '../db.sqlite'),
+  logging : false
 });
 
-// IMPORTA MODELLI (pattern factory perchè ogni modello è una funzione che accetta sequelize e DataTypes)
-const Cat = require("./Cat")(sequelize, DataTypes);
-const User = require("./User")(sequelize, DataTypes);
-const Comment = require("./Comment")(sequelize, DataTypes);
+// Importa le factory dei modelli
+import UserFactory from './User.js';
+import CatFactory from './Cat.js';
+import CommentFactory from './Comment.js';
 
-// REGISTRA ASSOCIAZIONI se il modello espone .associate()
-Object.values(sequelize.models)
-  .filter((model) => typeof model.associate === "function")
-  .forEach((model) => model.associate(sequelize.models));
+// Definisci i modelli
+const User    = UserFactory(sequelize, DataTypes);
+const Cat     = CatFactory(sequelize, DataTypes);
+const Comment = CommentFactory(sequelize, DataTypes);
 
-/*  Esempio:
-Cat.belongsTo(User,    { foreignKey:'userId' });
-User.hasMany(Cat,      { foreignKey:'userId' });
-Comment.belongsTo(Cat, { foreignKey:'catId' });
-Comment.belongsTo(User,{ foreignKey:'userId' });
-*/
+// Associazioni
+User.hasMany(Comment, { foreignKey: 'userId', onDelete: 'CASCADE' });
+Cat.hasMany(Comment, { foreignKey: 'catId',  onDelete: 'CASCADE' });
+Comment.belongsTo(User, { foreignKey: 'userId' });
+Comment.belongsTo(Cat,  { foreignKey: 'catId'  });
 
-// Sincronizza subito in sviluppo, cioè crea le tabelle se non esistono
-// e aggiorna le colonne se necessario (alter: true)
-if (process.env.NODE_ENV === "development") {
-  sequelize
-    .sync({ alter: true })
-    .then(() => console.log("📄 DB sincronizzato (dev)"))
-    .catch((err) => console.error("Errore sync:", err));
-}
+// Sincronizza il DB
+await sequelize.sync();
+console.log('Database sincronizzato');
 
-// EXPORT così nei controller faccio:
-// const { Cat } = require('../models');
-// e posso accedere ai metodi dei modelli come Cat.findAll(), User.create(), etc.
-
-module.exports = { sequelize, Cat, User, Comment };
+export { sequelize, User, Cat, Comment };  
